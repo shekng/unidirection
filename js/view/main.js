@@ -1,21 +1,18 @@
 'use strict';
 
-define(['jquery', 'underscore', 'marionette', 'text!tmpl/main.html', 'view/list'],
-function($, _, Mn, templateHTML, ListColView) {
-    var view = Mn.View.extend({
-        template: _.template(templateHTML),
-        ui: {        
+define([
+    'jquery',    
+    'underscore',
+    'backbone.radio',
+    'marionette',
+    'text!tmpl/main.html'    
+], function($, _, Radio, Mn, templateHTML){
+    return Mn.View.extend({        
+        template: _.template(templateHTML),                
+        onRender: function() {            
+        
         },
-        events: {
-        },
-        regions: {
-        },
-        onRender: function() {
-        },
-        onDestroy: function() {
+        onDestroy: function() {        
         }
-    });
-    
-    return view;
+    });    
 });
-

@@ -1,43 +1,39 @@
-  * {
-    font-family: Arial;
-    padding: 0;
-    margin: 0;
-  }
-
-  h1 {
-  	font-size: 16px;
-  	margin-bottom: 20px;
-  }
-
-  body {
-  	padding: 20px;
-  }
-
-  p {
-  	font-size: 14px;
-  	margin-bottom: 20px;
-  }
-
-#containerRegion {
-    border: 1px solid green;
-    padding: 10px;
+html, body {
+    /* Make the body to be as tall as browser window */
+    height: 100%;
+    padding: 0px;
+    margin:0px;
 }
 
-#headerRegion {
-    border: 2px solid green;
-    padding: 10px;
+div {    
+    //border: 1px green solid;
 }
 
-#mainRegion {
-    margin-top: 20px;
-    border: 2px solid green;
-    padding: 10px;
+#headerPanel {
+    height:50px;
+    background-color: #dfcfe3;
+    padding: 5px;
 }
 
-.listRegion {    
-    margin:10px 20px;
+#container {
+    position: relative;
+    height: calc(100% - 100px);    
 }
 
-.listRegion li{    
-    padding: 10px;
+#leftPanel {
+    position: absolute;
+    left: 0px;
+    width: 30%;
+    height: 100%;
+    background-color: #cee5cd;
+    padding: 5px;
+}
+
+#mainPanel {
+    position: absolute;
+    right: 0px;
+    width: 70%;
+    height: 100%;
+    background-color: #e5e3cd;
+    padding: 5px;
 }

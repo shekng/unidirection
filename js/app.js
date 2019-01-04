@@ -32,16 +32,38 @@ require.config({
       'backbone.radio': 'libs/backbone.radio',
       marionette: 'libs/backbone.marionette',
       pm: 'libs/postmessage',
-      pmSyncParent: 'libs/pmSyncParent'
+      pmSyncParent: 'libs/pmSyncParent',
+      mp: 'libs/mp'
   }
 });
 
 //Start up our App
 require([
-    'jquery', 'underscore', 'backbone', 'backbone.radio'
+    'mp', 'jquery', 'underscore', 'backbone', 'backbone.radio', 'marionette',
+    'view/appView'
 ], 
-function ($, _, Backbone, Radio) {        
-    /*
+function (mp, $, _, Backbone, Radio, Mn, AppView) {            
+    var Root = Mn.Application.extend({
+        region: "#appRegion",
+        onStart: function() {
+            this.showView(new AppView());
+        }
+    });
+    
+    var oRoot = new Root();
+    oRoot.start();
+        
+    mp.action.add("test", {sourceType: mp.enum.sourceType.db, sourceName: "users", persist: true}, function(sType, oParam) {
+        return {name: "hi"};
+    });
+    
+    mp.action.dispatch("test", {name: "mike"});
+});
+
+
+
+ /*
+    // testing
     var a = Backbone.Model.extend({
         initialize: function(options) {
             console.log(options.baseInfo);
@@ -71,71 +93,3 @@ function ($, _, Backbone, Radio) {
     
     t(100);
     */
-    
-    var app = (function() {
-        var me = {
-            actions: {},
-            db: {},
-            store: {
-                db: {},
-                ui: {}
-            },
-            enum: {
-                "sourceType": {
-                    "db": "db",
-                    "ui": "ui"
-                }
-            },
-            get: function(oObj, sProp) {
-                return oObj[sProp];
-            },
-            set: function(oObj, sProp, sValue) {
-                oObj[sProp] = sValue;
-            }            
-        };
-        
-        return {
-            action: {
-                add: function(sName, oParam, oCallBack) {
-                    if (typeof me[sName] === "undefined") {
-                        me.set(me.actions, sName, _.extend({}, oParam, {callBack: oCallBack}));
-                        //me.actions[sName] = ;
-                    }
-                    else {
-                        throw "App Error > action already existed!";
-                    }
-                },
-                dispatch: function(sType, oParam, oThis) {                
-                    if (typeof sType === "undefined") {
-                        throw "App Error > dispatch > type missing!";
-                    }
-
-                    if (typeof me.get(me.actions, sType) === "undefined") {
-                        throw "App Error > dispatch > action not found!";
-                    }
-
-                    var oReturn = me.get(me.actions, sType).callBack.call(oThis||this, sType, oParam);                    
-                    
-                    var sSourceName = me.get(me.actions, sType).sourceName;
-                    if (me.get(me.actions, sType).sourceType === me.get(me.enum, "sourceType").db) {
-                        if (sSourceName) {
-                            me.set(me.db, sSourceName,  oReturn);
-                        }
-
-                        if (me.get(me.actions, sType).persist) {
-                            me.set(me.store.db, sSourceName, JSON.stringify(oReturn) );
-                        }    
-                    }                    
-                }
-            }, 
-            enum: me.enum
-        }
-    }());    
-    
-    
-    app.action.add("test", {sourceType: app.enum.sourceType.db, sourceName: "users", persist: true}, function(sType, oParam) {
-        return {name: "hi"};
-    });
-    
-    app.action.dispatch("test", {name: "mike"});
-});
