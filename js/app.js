@@ -85,14 +85,21 @@ function ($, _, Backbone, Radio) {
                     "db": "db",
                     "ui": "ui"
                 }
-            } 
+            },
+            get: function(oObj, sProp) {
+                return oObj[sProp];
+            },
+            set: function(oObj, sProp, sValue) {
+                oObj[sProp] = sValue;
+            }            
         };
         
         return {
             action: {
                 add: function(sName, oParam, oCallBack) {
                     if (typeof me[sName] === "undefined") {
-                        me.actions[sName] = _.extend({}, oParam, {callBack: oCallBack});
+                        me.set(me.actions, sName, _.extend({}, oParam, {callBack: oCallBack}));
+                        //me.actions[sName] = ;
                     }
                     else {
                         throw "App Error > action already existed!";
@@ -103,19 +110,20 @@ function ($, _, Backbone, Radio) {
                         throw "App Error > dispatch > type missing!";
                     }
 
-                    if (typeof me.actions[sType] === "undefined") {
+                    if (typeof me.get(me.actions, sType) === "undefined") {
                         throw "App Error > dispatch > action not found!";
                     }
 
-                    var oReturn = me.actions[sType].callBack.call(oThis||this, sType, oParam);                    
+                    var oReturn = me.get(me.actions, sType).callBack.call(oThis||this, sType, oParam);                    
                     
-                    if (me.actions[sType].sourceType === me.enum.sourceType.db) {
-                        if (me.actions[sType].sourceName) {
-                            me.db[me.actions[sType].sourceName] = oReturn;
+                    var sSourceName = me.get(me.actions, sType).sourceName;
+                    if (me.get(me.actions, sType).sourceType === me.get(me.enum, "sourceType").db) {
+                        if (sSourceName) {
+                            me.set(me.db, sSourceName,  oReturn);
                         }
 
-                        if (me.actions[sType].persist) {
-                            me.store.db[me.actions[sType].sourceName] = JSON.stringify(oReturn);
+                        if (me.get(me.actions, sType).persist) {
+                            me.set(me.store.db, sSourceName, JSON.stringify(oReturn) );
                         }    
                     }                    
                 }
